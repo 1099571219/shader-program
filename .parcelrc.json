@@ -1,0 +1,12 @@
+{
+    "sourceMaps": true,
+    "targets": {
+      "browsers": "> 0.25%, not dead"
+    },
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "packagers": {
+      "*.js": "./parcel.config.js"
+    }
+  }
