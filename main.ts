@@ -1,3 +1,3 @@
 import './src/js/init'
-import './src/demo1/shader-1'
+import './src/demo/mouse-color'
 

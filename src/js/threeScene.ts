@@ -22,9 +22,21 @@ export class ThreeScene {
     document.body.appendChild(this.renderer.domElement);
 
     // 设置相机位置
-    this.camera.position.z = 5;
+    this.camera.position.z = 0.1;
+
+    window.addEventListener("resize",this.onWindowResize);
   }
 
+  onWindowResize = () => {
+    const { camera, renderer } = this;
+    // 更新相机的纵横比
+    camera.aspect = window.innerWidth / window.innerHeight;
+    // 更新相机的投影矩阵。这是在改变纵横比后必须做的
+    camera.updateProjectionMatrix();
+
+    // 更新渲染器的大小
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  };
   // 创建渲染循环
   public animate = () => {
     this.renderer.render(this.scene, this.camera);
