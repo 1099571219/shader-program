@@ -10,5 +10,6 @@ import './src/js/init'
 
 // demo-case
 // import './src/demo-case/draw-in-circle'
-import './src/demo-case/draw-in-square'
+// import './src/demo-case/draw-in-square'
+import './src/demo-case/move-shape'
 
