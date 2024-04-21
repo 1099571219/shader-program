@@ -9,5 +9,6 @@ import './src/js/init'
 // import './src/demo/step-smoothstep'
 
 // demo-case
-import './src/demo-case/draw-in-circle'
+// import './src/demo-case/draw-in-circle'
+import './src/demo-case/draw-in-square'
 
