@@ -15,7 +15,19 @@ export class ThreeScene {
     //   0.1,
     //   1000
     // );
-    this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
+    // this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
+    // 定义正交摄像机的视锥体边界
+    const aspect = window.innerWidth / window.innerHeight;
+    const height = 2 / aspect; // 计算高度跨度
+    
+    // 设置正交摄像机的边界
+    const left = -1;
+    const right = 1;
+    const top = height / 2;
+    const bottom = -height / 2;
+    const near = 0.1;
+    const far = 10;
+    this.camera = new THREE.OrthographicCamera(left, right, top, bottom,near, far)
 
     // 创建渲染器
     this.renderer = new THREE.WebGLRenderer();
@@ -36,12 +48,13 @@ export class ThreeScene {
 
     // 更新正交相机的宽高比
     // 假设相机的宽度固定，根据新的宽高比调整相机的高度
-    // const aspect = window.innerWidth / window.innerHeight;
-    // const cameraHeight = camera.top - camera.bottom; // 保持原始高度不变
-    // const cameraWidth = cameraHeight * aspect; // 根据新的纵横比计算宽度
-    // camera.left = -cameraWidth / 2;
-    // camera.right = cameraWidth / 2;
-    // top 和 bottom 保持不变，除非你也想根据某些条件调整它们
+    // 定义正交摄像机的视锥体边界
+    const aspect = window.innerWidth / window.innerHeight;
+    const height = 2 / aspect; // 计算高度跨度
+    
+    // 设置正交摄像机的边界
+    camera.top = height / 2;
+    camera.bottom = -height / 2;
     camera.updateProjectionMatrix();
 
     // 更新渲染器的大小
