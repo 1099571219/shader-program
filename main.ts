@@ -3,5 +3,6 @@ import './src/js/init'
 // import './src/demo/timer-color'
 // import './src/demo/blending-color'
 // import './src/demo/varying'
-import './src/demo/clamp'
+// import './src/demo/clamp'
+import './src/demo/step-smoothstep'
 
