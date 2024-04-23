@@ -19,7 +19,7 @@
       "});",
       "const vShader = `",
       "void main(){",
-      "    gl_Position = projectionMatrix * modelViewMatrix * vec4(position * .1,1.0);",
+      "    gl_Position = projectionMatrix * modelViewMatrix * vec4(position * 1.0,1.0);",
       "}",
       "`",
       "const fShader = `",
