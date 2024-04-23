@@ -12,45 +12,6 @@ void main(){
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position * 1.0,1.0);
 }
 `
-/*
-sin(0) = 0
-cos(0) = 1
-sin(PI) = 0
-cos(PI) = -1
-
-mat2(c,-s,s,c)
-
-theta = 0
-s = 0
-c = 1
-
-theta = PI /2
-s = 1
-c = 0
-
-theta = PI
-s = 0
-c = -1
-
-theta = PI + PI * 0.5
-s = -1
-c = 0
-
-theta = 2PI
-s = 0
-c = 1 
-
-PI /2 mat2 = [[0,-1],[1,0]]
-[3,2] => [-2,3]
-
-PI mat2 = [[-1,0,0,-1]]
-[3,2] => [-3,-2]
-
-PI+PI*.5  mat2 = [[0,1],[-1,0]]
-[3,2] => [2,-3]
-
-*/
-
 const fShader = `
 varying vec3 v_position;
 uniform float u_time;
@@ -60,19 +21,24 @@ mat2 getRotationMatrix(float theta){
     float c = cos(theta);
     return mat2(c,-s,s,c);
 }
-float inRect(vec2 pt,vec2 size,vec2 center){
-    vec2 p = pt.xy - center;
+mat2 getScaleMatrix(float scale){
+    return mat2(scale,0.0,0.0,scale);
+}
+float inRect(vec2 pt,vec2 anchor,vec2 size,vec2 center){
+    // vec2 p = pt.xy - center;
+    vec2 p = pt.xy;
     vec2 halfSize = size*0.5;
-    float horz = step(-halfSize.x,p.x) - step(halfSize.x,p.x);
-    float vert = step(-halfSize.y,p.y) - step(halfSize.y,p.y);
+    float horz = step(-halfSize.x - anchor.x ,p.x  ) - step(halfSize.x-anchor.x ,p.x);
+    float vert = step(-halfSize.y - anchor.y,p.y ) - step(halfSize.y-anchor.y ,p.y );
     return horz * vert;
 }
 void main(){
-    vec2 center = vec2(0.2);
-    mat2 mat = getRotationMatrix(u_time);
-    vec2 pt = mat * (v_position.xy - center) + center;
-    float yellow = inRect(pt,vec2(.5),center);
-    vec3 color = vec3(1.0,1.0,0.0) * yellow;
+    vec2 center = vec2(.5);
+    mat2 matr = getRotationMatrix(u_time);
+    mat2 mats = getScaleMatrix((sin(u_time)+2.0) *.5);
+    vec2 pt = mats * matr * v_position.xy;
+    float yellow = inRect(pt.xy,vec2(.15),vec2(0.3),center);
+    vec3 color = vec3(1,1,0.0) * yellow;
     gl_FragColor = vec4(color,1.0);
 }
 `
@@ -81,6 +47,7 @@ const uniforms = {
     u_time: { value: 0 }
 }
 const demoMounted = (threeScene: ThreeScene) => {
+    console.log(1);
 
     const geometry = new PlaneGeometry(2, 2);
     const material = new ShaderMaterial({ vertexShader: vShader, fragmentShader: fShader, uniforms });
@@ -89,6 +56,7 @@ const demoMounted = (threeScene: ThreeScene) => {
 
     const animate = () => {
         requestAnimationFrame(animate);
+
         uniforms.u_time.value = clock.getElapsedTime()
         threeScene.animate();
     };
