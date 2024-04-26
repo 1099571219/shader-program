@@ -19,7 +19,8 @@ import './src/js/init'
 // import './src/demo-case/checker'
 // import './src/demo-case/draw-line'
 // import './src/demo-case/combining-elements'
-import './src/demo-case/brick-pattern'
+// import './src/demo-case/brick-pattern'
+import './src/demo-case/noise-fire-shader'
 
 
 
