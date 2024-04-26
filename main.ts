@@ -17,7 +17,8 @@ import './src/js/init'
 // import './src/demo-case/tiles'
 // import './src/demo-case/draw-in-circle-2'
 // import './src/demo-case/checker'
-import './src/demo-case/draw-line'
+// import './src/demo-case/draw-line'
+import './src/demo-case/combining-elements'
 
 
 
