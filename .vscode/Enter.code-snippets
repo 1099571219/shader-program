@@ -10,7 +10,7 @@
     "scope": "javascript,typescript",
     "prefix": "demo-shader",
     "body": [
-      "import { Mesh, PlaneGeometry, ShaderMaterial } from 'three';",
+      "import { Clock, Mesh, PlaneGeometry, ShaderMaterial } from 'three';",
       "import type { ThreeScene } from '../js/threeScene';",
       "import eventBus from '../store';",
       "",
