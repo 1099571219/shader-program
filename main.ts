@@ -23,7 +23,8 @@ import './src/js/init'
 // import './src/demo-case/noise-shader'
 // import './src/demo-case/noise-fire-shader'
 // import './src/demo-case/texture'
-import './src/demo-case/box-into-sphere'
+// import './src/demo-case/box-into-sphere'
+import './src/demo-case/threejs-lighting-chunk'
 
 
 
