@@ -1,7 +1,14 @@
 import * as THREE from "three";
+import {lights_lambert_vertex,noise} from '../shader-chunk/shader-chunk'
+
+// custom shader chunk
+(THREE.ShaderChunk as any)['lights_lambert_vertex'] = lights_lambert_vertex;
+(THREE.ShaderChunk as any)['noise'] = noise;
+
+
 export class ThreeScene {
   scene: THREE.Scene;
-  camera: THREE.OrthographicCamera;
+  camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
 
   constructor() {
@@ -21,13 +28,21 @@ export class ThreeScene {
     const height = 2 / aspect; // 计算高度跨度
     
     // 设置正交摄像机的边界
-    const left = -1;
-    const right = 1;
-    const top = height / 2;
-    const bottom = -height / 2;
-    const near = 0.1;
-    const far = 10;
-    this.camera = new THREE.OrthographicCamera(left, right, top, bottom,near, far)
+    // const left = -1;
+    // const right = 1;
+    // const top = height / 2;
+    // const bottom = -height / 2;
+    // const near = 0.1;
+    // const far = 10;
+    // this.camera = new THREE.OrthographicCamera(left, right, top, bottom,near, far)
+
+    this.camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight,
+      1,
+      10000
+    );
+
 
     // 创建渲染器
     this.renderer = new THREE.WebGLRenderer();
@@ -35,27 +50,24 @@ export class ThreeScene {
     document.body.appendChild(this.renderer.domElement);
 
     // 设置相机位置
-    this.camera.position.z = 1;
+    this.camera.position.z = 55;
 
     window.addEventListener("resize", this.onWindowResize);
   }
 
   onWindowResize = () => {
     const { camera, renderer } = this;
-    // 更新相机的纵横比
-    // camera.aspect = window.innerWidth / window.innerHeight;
-    // 更新相机的投影矩阵。这是在改变纵横比后必须做的
-
-    // 更新正交相机的宽高比
-    // 假设相机的宽度固定，根据新的宽高比调整相机的高度
+    // 更新透视相机的纵横比
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix()
     // 定义正交摄像机的视锥体边界
-    const aspect = window.innerWidth / window.innerHeight;
-    const height = 2 / aspect; // 计算高度跨度
+    // const aspect = window.innerWidth / window.innerHeight;
+    // const height = 2 / aspect; // 计算高度跨度
     
     // 设置正交摄像机的边界
-    camera.top = height / 2;
-    camera.bottom = -height / 2;
-    camera.updateProjectionMatrix();
+    // camera.top = height / 2;
+    // camera.bottom = -height / 2;
+    // camera.updateProjectionMatrix();
 
     // 更新渲染器的大小
     renderer.setSize(window.innerWidth, window.innerHeight);
