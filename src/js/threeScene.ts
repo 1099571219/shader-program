@@ -39,8 +39,8 @@ export class ThreeScene {
     this.camera = new THREE.PerspectiveCamera(
       60,
       window.innerWidth / window.innerHeight,
-      1,
-      10000
+      .1,
+      1000
     );
 
 
@@ -50,7 +50,7 @@ export class ThreeScene {
     document.body.appendChild(this.renderer.domElement);
 
     // 设置相机位置
-    this.camera.position.z = 55;
+    this.camera.position.z = 5;
 
     window.addEventListener("resize", this.onWindowResize);
   }

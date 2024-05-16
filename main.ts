@@ -25,7 +25,10 @@ import './src/js/init'
 // import './src/demo-case/texture'
 // import './src/demo-case/box-into-sphere'
 // import './src/demo-case/threejs-lighting-chunk'
-import './src/demo-case/explosion'
+// import './src/demo-case/explosion'
+// import './src/demo-model/gltf-pack'
+// import './src/demo-model/flyControls'
+import './src/demo-model/fpControls'
 
 
 

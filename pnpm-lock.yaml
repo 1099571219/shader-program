@@ -13,6 +13,9 @@ devDependencies:
   '@types/three':
     specifier: ^0.163.0
     version: 0.163.0
+  gltfpack:
+    specifier: ^0.20.0
+    version: 0.20.0
   typescript:
     specifier: ^5.4.5
     version: 5.4.5
@@ -455,6 +458,11 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /gltfpack@0.20.0:
+    resolution: {integrity: sha512-+B1nEYM6iqtd46R02tSrrD+hP5bLWVuqkpMznZ++RKmQ/jYkIeNF79jIpUjaesbIg70xDV6YdE0kJEa9na+yHg==}
+    hasBin: true
+    dev: true
 
   /meshoptimizer@0.18.1:
     resolution: {integrity: sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==}
