@@ -32,7 +32,7 @@ void main() {
 
   // move the position along the normal and transform it
   vec3 newPosition = position + normal * displacement;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition *5.0, 1.0 );
 }
 `
 const fShader = `
@@ -70,11 +70,17 @@ const uniforms = {
     u_tex: { value: new THREE.TextureLoader().load(fireVitta)}
 }
 const demoMounted = (threeScene: ThreeScene) => {
+    threeScene.camera.position.z = 250;
     const geometry = new IcosahedronGeometry(20, 8);
     const material = new ShaderMaterial({ vertexShader: vShader, fragmentShader: fShader, uniforms, wireframe: false });
     const plane = new Mesh(geometry, material)
     const controls = new OrbitControls(threeScene.camera, threeScene.renderer.domElement)
     threeScene.scene.add(plane)
+    const lighting = new THREE.AmbientLight('#fff',1)
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(5,5),new THREE.MeshBasicMaterial({color:'#fff'}))
+    threeScene.scene.add(ground)
+    threeScene.scene.add(lighting)
+
     const clock = new Clock()
     const animate = () => {
         requestAnimationFrame(animate);

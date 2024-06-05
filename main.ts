@@ -31,7 +31,12 @@ import './src/js/init'
 // import './src/demo-model/gltf-pack'
 // import './src/demo-model/flyControls'
 // import './src/demo-model/fpControls'
-import './src/demo-model/size'
+// import './src/demo-model/size'
+import './src/demo-model/rayLabel'
+// import './src/demo-model/label'
+
+// post-processing
+// import './src/post-processing/demo'
 
 
 

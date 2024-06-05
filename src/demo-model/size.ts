@@ -1,4 +1,4 @@
-import { AmbientLight, AxesHelper, Box3, Box3Helper, BoxGeometry, BufferGeometry, Clock, Color, Float32BufferAttribute, LineBasicMaterial, LineSegments, Matrix4, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, PlaneGeometry, Quaternion, Raycaster, ShaderMaterial, SphereGeometry, Vector2, Vector3 } from 'three';
+import { AmbientLight, AxesHelper, Box3, Box3Helper, BoxGeometry, BufferGeometry, Clock, Color, Float32BufferAttribute, LineBasicMaterial, LineSegments, Matrix4, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, PlaneGeometry, Points, PointsMaterial, Quaternion, Raycaster, ShaderMaterial, SphereGeometry, Vector2, Vector3 } from 'three';
 import { ThreeScene } from '../js/threeScene';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import eventBus from '../store';
@@ -37,9 +37,11 @@ const demoMounted = (threeScene: ThreeScene) => {
     threeScene.camera.layers.enable(0)
     threeScene.camera.layers.enable(1)
     const geometry = new SphereGeometry(1, 1, 1);
-    const material = new ShaderMaterial({ vertexShader: vShader, fragmentShader: fShader, uniforms });
-    const polygon = new Mesh(geometry, material)
-
+    // const material = new ShaderMaterial({ vertexShader: vShader, fragmentShader: fShader, uniforms });
+    const material = new PointsMaterial({color:'#fff',size:.1})
+    const polygon = new Points(geometry, material)
+    console.log(polygon);
+    
     const model = [plane, polygon]
     polygon.position.setY(1)
 

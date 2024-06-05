@@ -15,5 +15,9 @@ export default defineConfig({
                 '**/*.vs', '**/*.fs', '/src/demo-case/*.ts'
             ],
             defaultExtension:"ts"
-        })]
+        })],
+    server:{
+        host:'0.0.0.0',
+        port:7880
+    }
 });

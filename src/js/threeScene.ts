@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {lights_lambert_vertex,noise} from '../shader-chunk/shader-chunk'
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 // custom shader chunk
 (THREE.ShaderChunk as any)['lights_lambert_vertex'] = lights_lambert_vertex;
@@ -10,7 +11,7 @@ export class ThreeScene {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
-
+  controls:OrbitControls
   constructor() {
     // 创建场景
     this.scene = new THREE.Scene();
@@ -49,6 +50,13 @@ export class ThreeScene {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
 
+    // 轨道控制器
+    this.controls = new OrbitControls(
+      this.camera,
+      this.renderer.domElement
+    );
+    this.controls.target.set(0,0,0)
+
     // 设置相机位置
     this.camera.position.z = 5;
 
@@ -74,6 +82,7 @@ export class ThreeScene {
   };
   // 创建渲染循环
   public animate = () => {
+    this.controls.update()
     this.renderer.render(this.scene, this.camera);
   };
 }
