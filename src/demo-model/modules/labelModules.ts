@@ -19,6 +19,8 @@ export class LabelModules {
   childList: HTMLDivElement[];
   cssRenderer = new CSS3DRenderer();
   trackballControls?: TrackballControls;
+  textList:HTMLDivElement[]=[]
+  isEdit:boolean = false
   constructor(public threeScene: ThreeScene) {
     this.initCss3DRenderer();
     // this.initTrackballControls();
@@ -177,7 +179,6 @@ export class LabelModules {
 
     if (intersects.length > 0) {
       const intersect = intersects[0];
-      console.log(intersect);
 
       // 创建一个 div 元素作为文本标签
       const div = document.createElement("div");
@@ -187,9 +188,13 @@ export class LabelModules {
       // 创建 CSS3D 对象
       div.style.pointerEvents = "none";
       const cssObject = new CSS3DObject(div);
-      cssObject.scale.set(0.01, 0.01, 0.01);
-      console.log(cssObject);
       cssObject.position.copy(intersect.point);
+      cssObject.scale.set(0.01, 0.01, 0.01);
+       // 获取交点的法向量，并根据法向量设置标签的朝向
+       const normal = intersect.face!.normal.clone();
+       const lookAtPosition = intersect.point.clone().add(normal);
+       cssObject.lookAt(lookAtPosition);
+      console.log(cssObject);
       this.threeScene.scene.add(cssObject);
     }
   };
