@@ -24,7 +24,7 @@ export class LabelModules {
   childList!: HTMLDivElement[];
   cssRenderer = new CSS3DRenderer();
   // 封装后的自定义 item list
-  objList: DrawModules<ArrowHelper | CSS3DObject>[] = [];
+  objList: DrawModules<Group>[] = [];
   // 自定义 item group 
   objGroup = new Group()
   constructor(public threeScene: ThreeScene) {
@@ -116,6 +116,7 @@ export class LabelModules {
   setEditModel = (val: boolean) => {
     this.editModel = val;
     this.setEditModelHandler(val);
+    
   };
   setEditModelHandler = (val: boolean) => {
     for (let i = 0; i < this.btnPlate.children.length; i++) {
@@ -123,6 +124,9 @@ export class LabelModules {
       if (item.textContent!.length < 4)
         item.style.display = val ? "block" : "none";
     }
+    this.objList.forEach(obj=>{
+      obj.boundingBoxHelper.visible = false
+    })
   };
   setEditDetail = (el: HTMLDivElement) => {
     if (this.lastEl) this.lastEl.style.backgroundColor = "white";
@@ -185,7 +189,7 @@ export class LabelModules {
       const stopDraw = () => {
         
         const drawArrowIns = new DrawModules(
-          arrowHelper,
+          arrowGroup,
           threeScene.camera
         );
         this.objList.push(drawArrowIns);
@@ -246,7 +250,7 @@ export class LabelModules {
       console.log(intersects[0],this.objList,inObjList);
       if (inObjList>=0) {
         console.log(this.objList[inObjList]);
-
+        this.objList[inObjList].boundingBoxHelper.visible = true
       } else {
         console.log('执行');
         

@@ -13,7 +13,7 @@ import {
 
 export class DrawModules<T extends Object3D> {
   boundingBox = new Box3();
-  boundingBoxHelper?: Box3Helper;
+  boundingBoxHelper: Box3Helper;
   // 变量用于拖拽操作
   dragging = false;
   dragObject: T | null = null;

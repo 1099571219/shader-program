@@ -55,7 +55,7 @@ const demoMounted = (threeScene: ThreeScene) => {
 
   // threeScene.controls.enabled = false;
   const planeGeo = new PlaneGeometry(10, 10);
-  const planeMat = new MeshStandardMaterial({ color: "#fff" });
+  const planeMat = new MeshStandardMaterial({ color: "#ddd" });
   const plane = new Mesh(planeGeo, planeMat);
 
   plane.rotateX(-Math.PI / 2);
@@ -74,7 +74,7 @@ const demoMounted = (threeScene: ThreeScene) => {
 
   const labelModules = new LabelModules(threeScene)
 
-  const textMaterial = new MeshBasicMaterial({ color: 0xffffff });
+  const textMaterial = new MeshBasicMaterial({ color: 0xdddddd });
   const textMesh = new Mesh(geometry, textMaterial);
   const model = [plane, textMesh];
   textMesh.position.setY(2);
