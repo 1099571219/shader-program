@@ -1,69 +1,47 @@
-import { ArrowHelper, Raycaster, Vector2, Vector3 } from "three";
+import { ArrowHelper, Group, Material, MeshBasicMaterial, Object3D, Raycaster, Vector2, Vector3 } from "three";
 import {
   CSS3DObject,
   CSS3DRenderer,
   TrackballControls,
 } from "three/examples/jsm/Addons";
 import { ThreeScene } from "../../js/threeScene";
+import { DrawModules } from "./drawModules";
 
 export class LabelModules {
+
   lastEl?: HTMLDivElement;
+  // 是否处于标注模式
   editModel: boolean = false;
   // 0:文本 1:箭头
   activeModel = -1;
-  btnPlate: HTMLDivElement;
+  // 按钮面板 rootEl
+  btnPlate!: HTMLDivElement;
   // 创建Raycaster和鼠标向量
   mouse = new Vector2();
-  arrowHelper: ArrowHelper | null = null;
+  // 场景射线
   raycaster = new Raycaster();
-  childList: HTMLDivElement[];
+  // ui 子菜单 list
+  childList!: HTMLDivElement[];
   cssRenderer = new CSS3DRenderer();
-  trackballControls?: TrackballControls;
-  textList:HTMLDivElement[]=[]
-  isEdit:boolean = false
+  // 封装后的自定义 item list
+  objList: DrawModules<ArrowHelper | CSS3DObject>[] = [];
+  // 自定义 item group 
+  objGroup = new Group()
   constructor(public threeScene: ThreeScene) {
     this.initCss3DRenderer();
-    // this.initTrackballControls();
-    const { btnPlate, childList } = this.initElement();
-    this.btnPlate = btnPlate;
-    this.childList = childList;
-    btnPlate.addEventListener("click", (event: MouseEvent) => {
-      if (event.target) {
-        if (event.target instanceof HTMLElement) {
-          if (event.target.innerText === "查看模式") {
-            this.setControlsEnabled(true);
-            this.setEditModel(false);
-          } else if (event.target.innerText === "标注模式") {
-            this.setControlsEnabled(false);
-            this.setEditModel(true);
-          }
-        }
-        this.setEditDetail(event.target as HTMLDivElement);
-      }
-    });
+    this.initElement();
+    this.initEventListener();
+    threeScene.scene.add(this.objGroup);
+
+  }
+  initEventListener = () => {
     // 添加事件监听器
-    threeScene.renderer.domElement.addEventListener(
+    this.threeScene.renderer.domElement.addEventListener(
       "pointerdown",
       this.onPointerDown,
       false
     );
-    threeScene.renderer.domElement.addEventListener(
-      "pointerup",
-      this.onPointerUp,
-      false
-    );
-  }
-  // TrackballControls 控制器
-  initTrackballControls = () => {
-    const controls= new TrackballControls(this.threeScene.camera, this.threeScene.renderer.domElement);
-    this.trackballControls = controls
-    controls.rotateSpeed = 5.0;
-    controls.zoomSpeed = 1.2;
-    controls.panSpeed = 0.8;
-    controls.noZoom = false;
-    controls.noPan = false;
-    controls.staticMoving = true;
-    controls.dynamicDampingFactor = 0.3;
+
   };
   initCss3DRenderer = () => {
     // CSS3D 渲染器
@@ -117,10 +95,22 @@ export class LabelModules {
 
     document.body.appendChild(btnPlate);
 
-    return {
-      btnPlate,
-      childList,
-    };
+    btnPlate.addEventListener("click", (event: MouseEvent) => {
+      if (event.target) {
+        if (event.target instanceof HTMLElement) {
+          if (event.target.innerText === "查看模式") {
+            this.setControlsEnabled(true);
+            this.setEditModel(false);
+          } else if (event.target.innerText === "标注模式") {
+            this.setControlsEnabled(false);
+            this.setEditModel(true);
+          }
+        }
+        this.setEditDetail(event.target as HTMLDivElement);
+      }
+    });
+    this.btnPlate = btnPlate;
+    this.childList = childList;
   };
 
   setEditModel = (val: boolean) => {
@@ -154,22 +144,63 @@ export class LabelModules {
       const length = 1;
       const hex = 0xffff00;
 
-      if (this.arrowHelper) {
-        threeScene.scene.remove(this.arrowHelper);
-      }
-
-      this.arrowHelper = new ArrowHelper(
+      const arrowHelper = new ArrowHelper(
         direction,
         intersect.point,
         length,
         hex
       );
-      threeScene.scene.add(this.arrowHelper);
+      const arrowGroup = new Group()
+      arrowGroup.add(arrowHelper)
+      this.objGroup.add(arrowGroup)
+      const arrowPointerMove = (event: PointerEvent) => {
+        // console.log("平移");
+        const { mouse, raycaster } = this;
+        const { camera } = this.threeScene;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+    
+        const intersects = raycaster.intersectObjects(
+          this.threeScene.scene.children
+        );
+    
+        if (intersects.length > 0) {
+          const intersect = intersects[0];
+          const direction = intersect.point
+            .clone()
+            .sub(arrowHelper.position)
+            .normalize();
+          const length = intersect.point.distanceTo(arrowHelper.position);
+    
+          arrowHelper.setDirection(direction);
+          arrowHelper.setLength(length);
+        }
+      };
       threeScene.renderer.domElement.addEventListener(
         "pointermove",
-        this.arrowMouseMove,
+        arrowPointerMove,
         false
       );
+      const stopDraw = () => {
+        
+        const drawArrowIns = new DrawModules(
+          arrowHelper,
+          threeScene.camera
+        );
+        this.objList.push(drawArrowIns);
+        arrowGroup.add(drawArrowIns.boundingBoxHelper!);
+        // this.threeScene.scene.add(drawArrowIns.boundingBoxHelper)
+        threeScene.renderer.domElement.removeEventListener(
+          "pointerup",
+          stopDraw
+        );
+        threeScene.renderer.domElement.removeEventListener(
+          "pointermove",
+          arrowPointerMove
+        );
+      };
+      threeScene.renderer.domElement.addEventListener("pointerup", stopDraw);
     }
   };
   drawTextArea = (raycaster: Raycaster) => {
@@ -190,61 +221,44 @@ export class LabelModules {
       const cssObject = new CSS3DObject(div);
       cssObject.position.copy(intersect.point);
       cssObject.scale.set(0.01, 0.01, 0.01);
-       // 获取交点的法向量，并根据法向量设置标签的朝向
-       const normal = intersect.face!.normal.clone();
-       const lookAtPosition = intersect.point.clone().add(normal);
-       cssObject.lookAt(lookAtPosition);
+      // 获取交点的法向量，并根据法向量设置标签的朝向
+      const normal = intersect.face!.normal.clone();
+      const lookAtPosition = intersect.point.clone().add(normal);
+      cssObject.lookAt(lookAtPosition);
       console.log(cssObject);
       this.threeScene.scene.add(cssObject);
     }
   };
 
-  onPointerDown = (event: MouseEvent) => {
+  onPointerDown = (event: PointerEvent) => {
     console.log("按下");
     const { mouse, raycaster, threeScene } = this;
     if (!this.editModel) return;
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, threeScene.camera);
-    if (this.activeModel === 0) {
-      this.drawTextArea(raycaster);
-    } else if (this.activeModel === 1) {
-      this.drawArrow(raycaster);
-    }
-  };
-
-  arrowMouseMove = (event: MouseEvent) => {
-    // console.log("平移");
-    if (!this.arrowHelper) return;
-    const { mouse, raycaster } = this;
-    const { camera } = this.threeScene;
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    raycaster.setFromCamera(mouse, camera);
-
-    const intersects = raycaster.intersectObjects(
-      this.threeScene.scene.children
-    );
-
+    const intersects = raycaster.intersectObjects(threeScene.scene.children);
     if (intersects.length > 0) {
-      const intersect = intersects[0];
-      const direction = intersect.point
-        .clone()
-        .sub(this.arrowHelper.position)
-        .normalize();
-      const length = intersect.point.distanceTo(this.arrowHelper.position);
+      // 判断是否为自定义 item
+      const inObjList = this.objList.findIndex(
+        (obj) => obj.obj === intersects[0].object.parent
+      );
+      console.log(intersects[0],this.objList,inObjList);
+      if (inObjList>=0) {
+        console.log(this.objList[inObjList]);
 
-      this.arrowHelper.setDirection(direction);
-      this.arrowHelper.setLength(length);
+      } else {
+        console.log('执行');
+        
+        if (this.activeModel === 0) {
+          this.drawTextArea(raycaster);
+        } else if (this.activeModel === 1) {
+          this.drawArrow(raycaster);
+        }
+      }
     }
   };
-  onPointerUp = () => {
-    this.threeScene.renderer.domElement.removeEventListener(
-      "pointermove",
-      this.arrowMouseMove,
-      false
-    );
-  };
+
   animate = () => {
     this.cssRenderer.render(this.threeScene.scene, this.threeScene.camera);
     // this.trackballControls?.update()
